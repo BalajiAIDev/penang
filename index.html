@@ -116,9 +116,6 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 24px rgba(0,0,0,0.08);
   }
-  .card.sold { filter: grayscale(1); }
-  .card.sold .card-body { pointer-events: none; }
-
   .card-img {
     width: 100%;
     height: 200px;
@@ -161,8 +158,8 @@
     padding: 3px 9px;
     border-radius: 20px;
   }
-  .badge-available { background: #e6f5ed; color: #1a7a40; }
-  .badge-sold { background: #f5e6e6; color: #a33; }
+  .badge-available { color: #16a34a; }
+  .badge-sold { color: #dc2626; }
 
   .card-title {
     font-size: 16px;
@@ -274,9 +271,9 @@ const items = [
   { name: "Dishwasher", brand: "Bosch / Harvey Norman", detail: "SilencePlus · WiFi + App control · 1y 3m old · 2yr Bosch + 3yr HN warranty", status: "sold", price: "RM 2,900", imgs: [BASE+"Dishwasher-1.jpeg", BASE+"Dishwasher-2.jpeg", BASE+"Dishwasher-3.jpeg"] },
   { name: "Wet Grinder", brand: "Sowbaghya", detail: "", status: "available", price: "RM 175", imgs: [BASE+"Wet-Grinder.jpg"] },
   { name: "Mixie", brand: "Prestige", detail: "", status: "available", price: "RM 175", imgs: [BASE+"Prestige-Mixie.jpg"] },
+  { name: "Stainless Steel Pressure Cooker 5L, 3L + 2L (Shared lid)", brand: "Butterfly", detail: "1 year old · Original price RM 220", status: "sold", price: "RM 125", imgs: [] },
   { name: "Vacuum Cleaner", brand: "Dell", detail: "Original price RM 160 · 1.5 years old", status: "sold", price: "RM 80", imgs: [BASE+"Vaccum-Cleaner.jpg"] },
   { name: "Air Fryer", brand: "Yilizomana", detail: "Original price RM 120 · 1 year old", status: "sold", price: "RM 60", imgs: [BASE+"Air-Fryer.jpg"] },
-  { name: "Standing Fan", brand: "", detail: "Original price RM 80 · 3 years old", status: "sold", price: "RM 40", imgs: [BASE+"fan.jpg"] },
   { name: "Standing Fan", brand: "", detail: "Original price RM 80 · 3 years old", status: "available", price: "RM 40", imgs: [BASE+"fan.jpg"] },
   { name: "Baby Stroller", brand: "Beige", detail: "Original price RM 140 · 2.5 years old", status: "available", price: "RM 45", imgs: [BASE+"Stroller.jpg"] },
   { name: "Hot Box Pan 3L", brand: "Preethi", detail: "", status: "available", price: "RM 40", imgs: [BASE+"Hot-Box-Appam-Pan.jpg"] },
@@ -285,7 +282,8 @@ const items = [
   { name: "Electric Kettle", brand: "Gaabor", detail: "2L electric · Original price RM 50 · 6 months old", status: "available", price: "RM 30", imgs: [BASE+"Kettle.jpg"] },
   { name: "Chair", brand: "", detail: "Original price RM 140 · 5 years old", status: "available", price: "RM 30", imgs: [BASE+"Chair.jpg"] },
   { name: "Chair", brand: "", detail: "Original price RM 120 · 6 years old", status: "available", price: "RM 30", imgs: [BASE+"Chair.jpg"] },
-  { name: "Milk Boiler", brand: "Pigeon", detail: "2L Stainless Steel · Whistle indication · 6 months old", status: "available", price: "RM 30", imgs: [BASE+"Milk-Cooker.jpeg"] }
+  { name: "Milk Boiler", brand: "Pigeon", detail: "2L Stainless Steel · Whistle indication · 6 months old", status: "available", price: "RM 30", imgs: [BASE+"Milk-Cooker.jpeg"] },
+  { name: "Puttu Maker", brand: "Navarasa", detail: "", status: "sold", price: "RM 20", imgs: [] }
 ];
 
 let sliderIndex = 0;
@@ -299,7 +297,7 @@ function renderImgs(imgs, id) {
       <span>Photo coming soon</span></div>`;
   }
   if (imgs.length === 1) {
-    return `<img class="card-img" src="${thumb(imgs[0])}" alt="photo" loading="lazy" onclick="lbOpen(${JSON.stringify(imgs)},0)">`;
+    return `<img class="card-img" src="${thumb(imgs[0])}" alt="photo" loading="lazy" onclick='lbOpen(${JSON.stringify(imgs)},0)'>`;
   }
   const imgTags = imgs.map((src, i) => `<img src="${thumb(src)}" class="${i===0?'active':''}" alt="photo ${i+1}" loading="lazy">`).join('');
   const dots = imgs.map((_, i) => `<span class="${i===0?'active':''}" onclick="goSlide('s${id}',${i});event.stopPropagation()"></span>`).join('');
@@ -331,7 +329,7 @@ function stepSlide(id, dir) {
 function renderCard(item, idx) {
   const sold = item.status === "sold";
   return `
-    <div class="card ${sold ? 'sold' : ''}" data-status="${item.status}">
+    <div class="card" data-status="${item.status}">
       ${renderImgs(item.imgs, idx)}
       <div class="card-body">
         <div class="card-meta">
