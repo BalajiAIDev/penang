@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moving Sale — Penang</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f7f6f3;
+    color: #1a1a18;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: #1a1a18;
+    color: #f7f6f3;
+    padding: 3rem 1.5rem 2.5rem;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: #e8c547;
+    color: #1a1a18;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .hero p {
+    color: #a0a09a;
+    font-size: 1rem;
+    max-width: 460px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.6;
+  }
+  .contact-strip {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .contact-btn:hover { opacity: 0.85; }
+  .btn-wa { background: #25d366; color: #fff; }
+  .btn-phone { background: #2a2a28; color: #f7f6f3; border: 1px solid #444; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    padding: 1.25rem 1.5rem;
+    background: #fff;
+    border-bottom: 1px solid #e8e7e3;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-bar span { font-size: 13px; color: #888; margin-right: 4px; }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #444;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: #1a1a18;
+    color: #f7f6f3;
+    border-color: #1a1a18;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    padding: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* CARD */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e8e7e3;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  }
+  .card.sold { filter: grayscale(1); }
+  .card.sold .card-body { pointer-events: none; }
+
+  .card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #f0efe9;
+    display: block;
+  }
+  .img-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #f0efe9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: #bbb;
+    font-size: 13px;
+  }
+  .img-placeholder svg { opacity: 0.4; }
+
+  .card-body { padding: 14px 16px 16px; }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .card-brand {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #c47c2b;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .badge-available { background: #e6f5ed; color: #1a7a40; }
+  .badge-sold { background: #f5e6e6; color: #a33; }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1a1a18;
+  }
+  .card-detail {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f0efe9;
+  }
+  .price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a18;
+  }
+  .price span { font-size: 13px; font-weight: 400; color: #aaa; margin-left: 4px; }
+  .wa-link {
+    font-size: 13px;
+    color: #25d366;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .wa-link:hover { text-decoration: underline; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    font-size: 13px;
+    color: #aaa;
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-tag">Moving Sale · Penang Island</div>
+  <p>Pickup from Alpine Tower, near Fairview International School. All prices negotiable. Photos available on request.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem;"><span style="background:#2a2a28;color:#e8c547;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;">📦 Available for pickup till Aug 15, 2026</span><span style="background:#2a2a28;color:#a0a09a;font-size:12px;padding:5px 14px;border-radius:20px;">Last updated: Jun 12, 2026 · 11:47 PM</span></div>
+  <p style="color: #a0a09a; font-size: 13px; margin-bottom: 0.75rem;">WhatsApp or call on below numbers</p>
+  <div class="contact-strip">
+    <a class="contact-btn btn-wa" href="https://wa.me/919043739120">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      +91 90437 39120
+    </a>
+    <a class="contact-btn btn-wa" href="https://wa.me/601133222679">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      +60 11 3322 2679
+    </a>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <span>Filter:</span>
+  <button class="filter-btn active" onclick="filterItems('all', this)">All</button>
+  <button class="filter-btn" onclick="filterItems('available', this)">Available only</button>
+  <button class="filter-btn" onclick="filterItems('sold', this)">Sold</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Pickup from Alpine Tower, Near Fairview International School &nbsp;·&nbsp; Prices negotiable &nbsp;·&nbsp; Contact via WhatsApp for photos
+</footer>
+
+<style>
+.slider-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; background: #f0efe9; cursor: zoom-in; }
+.slider-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s; }
+.slider-wrap img.active { opacity: 1; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: #fff; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.slider-btn.prev { left: 8px; }
+.slider-btn.next { right: 8px; }
+.slider-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+.slider-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; }
+.slider-dots span.active { background: #fff; }
+.card-img { cursor: zoom-in; }
+#lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 1000; align-items: center; justify-content: center; }
+#lightbox.open { display: flex; }
+#lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 6px; }
+#lb-close { position: fixed; top: 18px; right: 22px; color: #fff; font-size: 32px; cursor: pointer; line-height: 1; background: none; border: none; opacity: 0.8; }
+#lb-close:hover { opacity: 1; }
+#lb-prev, #lb-next { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); color: #fff; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+#lb-prev { left: 16px; }
+#lb-next { right: 16px; }
+#lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.28); }
+#lb-counter { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.6); font-size: 13px; }
+</style>
+<script>
+const BASE = "https://assets.autorender.io/xMU7gjUBzZ/Move/";
+const WA = "919043739120";
+const waMsg = (item) => `https://wa.me/${WA}?text=${encodeURIComponent(`Hi, I'm interested in the ${item} you have listed for sale.`)}`;
+
+const items = [
+  { name: "Honda City 2017", brand: "Honda", detail: "2017 model · Mileage 79k km", status: "sold", price: "RM 35,000",
+    imgs: [BASE+"Honda-City-1.jpg", BASE+"Honda-City-2.jpeg"] },
+  { name: "Dishwasher", brand: "Bosch / Harvey Norman", detail: "SilencePlus · WiFi + App control · 1y 3m old · 2yr Bosch + 3yr HN warranty", status: "sold", price: "RM 2,900", imgs: [BASE+"Dishwasher-1.jpeg", BASE+"Dishwasher-2.jpeg", BASE+"Dishwasher-3.jpeg"] },
+  { name: "Wet Grinder", brand: "Sowbaghya", detail: "", status: "available", price: "RM 175", imgs: [BASE+"Wet-Grinder.jpg"] },
+  { name: "Mixie", brand: "Prestige", detail: "", status: "available", price: "RM 175", imgs: [BASE+"Prestige-Mixie.jpg"] },
+  { name: "Vacuum Cleaner", brand: "Dell", detail: "Original price RM 160 · 1.5 years old", status: "sold", price: "RM 80", imgs: [BASE+"Vaccum-Cleaner.jpg"] },
+  { name: "Air Fryer", brand: "Yilizomana", detail: "Original price RM 120 · 1 year old", status: "sold", price: "RM 60", imgs: [BASE+"Air-Fryer.jpg"] },
+  { name: "Standing Fan", brand: "", detail: "Original price RM 80 · 3 years old", status: "sold", price: "RM 40", imgs: [BASE+"fan.jpg"] },
+  { name: "Standing Fan", brand: "", detail: "Original price RM 80 · 3 years old", status: "available", price: "RM 40", imgs: [BASE+"fan.jpg"] },
+  { name: "Baby Stroller", brand: "Beige", detail: "Original price RM 140 · 2.5 years old", status: "available", price: "RM 45", imgs: [BASE+"Stroller.jpg"] },
+  { name: "Hot Box Pan 3L", brand: "Preethi", detail: "", status: "available", price: "RM 40", imgs: [BASE+"Hot-Box-Appam-Pan.jpg"] },
+  { name: "Appam Pan", brand: "Premier", detail: "", status: "available", price: "RM 40", imgs: [BASE+"Hot-Box-Appam-Pan.jpg"] },
+  { name: "Sandwich Maker", brand: "Sayona", detail: "Original price RM 55 · 1.5 years old", status: "sold", price: "RM 30", imgs: [BASE+"Sandwich-Maker.jpg"] },
+  { name: "Electric Kettle", brand: "Gaabor", detail: "2L electric · Original price RM 50 · 6 months old", status: "available", price: "RM 30", imgs: [BASE+"Kettle.jpg"] },
+  { name: "Chair", brand: "", detail: "Original price RM 140 · 5 years old", status: "available", price: "RM 30", imgs: [BASE+"Chair.jpg"] },
+  { name: "Chair", brand: "", detail: "Original price RM 120 · 6 years old", status: "available", price: "RM 30", imgs: [BASE+"Chair.jpg"] },
+  { name: "Milk Boiler", brand: "Pigeon", detail: "2L Stainless Steel · Whistle indication · 6 months old", status: "available", price: "RM 30", imgs: [BASE+"Milk-Cooker.jpeg"] }
+];
+
+let sliderIndex = 0;
+
+function thumb(url) { return url.replace('/Move/', '/w_360/Move/'); }
+
+function renderImgs(imgs, id) {
+  if (!imgs || imgs.length === 0) {
+    return `<div class="img-placeholder">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Photo coming soon</span></div>`;
+  }
+  if (imgs.length === 1) {
+    return `<img class="card-img" src="${thumb(imgs[0])}" alt="photo" loading="lazy" onclick="lbOpen(${JSON.stringify(imgs)},0)">`;
+  }
+  const imgTags = imgs.map((src, i) => `<img src="${thumb(src)}" class="${i===0?'active':''}" alt="photo ${i+1}" loading="lazy">`).join('');
+  const dots = imgs.map((_, i) => `<span class="${i===0?'active':''}" onclick="goSlide('s${id}',${i});event.stopPropagation()"></span>`).join('');
+  return `<div class="slider-wrap" id="s${id}" data-imgs='${JSON.stringify(imgs)}' onclick="lbOpenFromSlider('s${id}')">
+    ${imgTags}
+    <button class="slider-btn prev" onclick="stepSlide('s${id}',-1);event.stopPropagation()">&#8249;</button>
+    <button class="slider-btn next" onclick="stepSlide('s${id}',1);event.stopPropagation()">&#8250;</button>
+    <div class="slider-dots">${dots}</div>
+  </div>`;
+}
+
+function goSlide(id, idx) {
+  const wrap = document.getElementById(id);
+  const imgs = wrap.querySelectorAll('img');
+  const dots = wrap.querySelectorAll('.slider-dots span');
+  imgs.forEach((img, i) => img.classList.toggle('active', i === idx));
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  wrap._cur = idx;
+}
+
+function stepSlide(id, dir) {
+  const wrap = document.getElementById(id);
+  const imgs = wrap.querySelectorAll('img');
+  const cur = wrap._cur || 0;
+  const next = (cur + dir + imgs.length) % imgs.length;
+  goSlide(id, next);
+}
+
+function renderCard(item, idx) {
+  const sold = item.status === "sold";
+  return `
+    <div class="card ${sold ? 'sold' : ''}" data-status="${item.status}">
+      ${renderImgs(item.imgs, idx)}
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-brand">${item.brand || '—'}</span>
+          <span class="badge ${sold ? 'badge-sold' : 'badge-available'}">${sold ? 'Sold' : 'Available'}</span>
+        </div>
+        <div class="card-title">${item.name}</div>
+        ${item.detail ? `<div class="card-detail">${item.detail}</div>` : '<div class="card-detail" style="min-height:20px"></div>'}
+        <div class="card-footer">
+          <div class="price">${item.price}</div>
+          ${!sold ? `<a class="wa-link" href="${waMsg(item.name)}" target="_blank">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enquire
+          </a>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function filterItems(status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card').forEach(card => {
+    card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+  });
+}
+
+document.getElementById('grid').innerHTML = items.map((item, i) => renderCard(item, i)).join('');
+
+let _lbImgs = [], _lbIdx = 0;
+function lbOpen(imgs, idx) {
+  _lbImgs = imgs; _lbIdx = idx;
+  lbShow();
+}
+function lbOpenFromSlider(id) {
+  const wrap = document.getElementById(id);
+  const imgs = JSON.parse(wrap.dataset.imgs);
+  const cur = wrap._cur || 0;
+  lbOpen(imgs, cur);
+}
+function lbShow() {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lb-img').src = _lbImgs[_lbIdx];
+  const hasMult = _lbImgs.length > 1;
+  document.getElementById('lb-prev').style.display = hasMult ? 'flex' : 'none';
+  document.getElementById('lb-next').style.display = hasMult ? 'flex' : 'none';
+  document.getElementById('lb-counter').textContent = hasMult ? `${_lbIdx+1} / ${_lbImgs.length}` : '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function lbClose() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbStep(dir) {
+  _lbIdx = (_lbIdx + dir + _lbImgs.length) % _lbImgs.length;
+  lbShow();
+}
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') lbClose();
+  if (e.key === 'ArrowLeft') lbStep(-1);
+  if (e.key === 'ArrowRight') lbStep(1);
+});
+
+</script>
+
+<div id="lightbox" onclick="lbClose()">
+  <button id="lb-close" onclick="lbClose()">&#215;</button>
+  <button id="lb-prev" onclick="lbStep(-1);event.stopPropagation()">&#8249;</button>
+  <img id="lb-img" src="" alt="fullscreen">
+  <button id="lb-next" onclick="lbStep(1);event.stopPropagation()">&#8250;</button>
+  <div id="lb-counter"></div>
+</div>
+</body>
+</html>
